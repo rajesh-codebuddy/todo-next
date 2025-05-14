@@ -66,6 +66,18 @@ export default function Home({
       console.log(error);
     }
   };
+
+  const handleUpdateTodo = async (id: string, updatedTodo: ITodo) => {
+    try {
+      await fetch(`todos/${id}`, {
+        method: "PUT",
+        body: JSON.stringify(updatedTodo),
+      });
+      fetchTodos();
+    } catch (error) {
+      console.log(error);
+    }
+  };
   const handleSearchTodo = (query: string) => {
     setSearchQuery(query);
   };
@@ -86,6 +98,7 @@ export default function Home({
             todo={todos}
             handleTodoDelete={handleTodoDelete}
             searchTodo={searchQuery}
+            handleUpdateTodo={handleUpdateTodo}
           />
         </Container>
       </Paper>

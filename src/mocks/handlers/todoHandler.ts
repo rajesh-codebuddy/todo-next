@@ -40,6 +40,20 @@ const getTodoHandler = http.get("todos/:id", ({ params }) => {
   return HttpResponse.json(response);
 });
 
+const updateTodoHandler = http.put("todos/:id", async ({ params, request }) => {
+  const { id } = params;
+  const updatedTodoReq = (await request.json()) as ITodo;
+  if (updatedTodoReq) {
+    todos = todos.map((todo) => {
+      if (todo.id === id) {
+        return updatedTodoReq;
+      } else {
+        return todo;
+      }
+    });
+  }
+});
+
 const deleteTodoHandler = http.delete("todos/:id", ({ params }) => {
   const { id } = params;
   const newTodos = todos.filter((todo) => todo.id !== id);
@@ -75,4 +89,5 @@ export {
   createTodoHandler,
   getTodoHandler,
   deleteTodoHandler,
+  updateTodoHandler,
 };

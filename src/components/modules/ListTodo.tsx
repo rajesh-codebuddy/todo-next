@@ -6,12 +6,14 @@ interface ListTodoProps {
   todo: ITodo[];
   handleTodoDelete: (id: string) => void;
   searchTodo: string;
+  handleUpdateTodo: (id: string, updatedTodo: ITodo) => void;
 }
 
 const ListTodo: FunctionComponent<ListTodoProps> = ({
   todo,
   handleTodoDelete,
   searchTodo,
+  handleUpdateTodo,
 }) => {
   const filterTodo = searchTodo
     ? todo.filter((tdo) => tdo.description.includes(searchTodo))
@@ -35,7 +37,12 @@ const ListTodo: FunctionComponent<ListTodoProps> = ({
               <span className="flex">
                 <Checkbox
                   checked={tdo.isCompleted}
-                  // onChange={(event) => setChecked(event.currentTarget.checked)}
+                  onChange={(event) => {
+                    handleUpdateTodo(tdo.id, {
+                      ...tdo,
+                      isCompleted: !tdo.isCompleted,
+                    });
+                  }}
                 />
                 <Text ml={5}>{tdo.description}</Text>
               </span>

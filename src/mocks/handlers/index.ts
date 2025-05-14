@@ -3,6 +3,7 @@ import {
   getTodoHandler,
   createTodoHandler,
   deleteTodoHandler,
+  updateTodoHandler,
 } from "./todoHandler";
 
 const handlers = [
@@ -10,6 +11,7 @@ const handlers = [
   getTodoHandler,
   createTodoHandler,
   deleteTodoHandler,
+  updateTodoHandler,
 ];
 
 export default handlers;
