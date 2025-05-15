@@ -1,6 +1,7 @@
 import type { FunctionComponent } from "react";
 import type { ITodo } from "../../types/todo/todo.entity";
 import { Button, Checkbox, Group, ScrollArea, Text } from "@mantine/core";
+import { useRouter } from "next/router";
 
 interface ListTodoProps {
   todo: ITodo[];
@@ -15,6 +16,7 @@ const ListTodo: FunctionComponent<ListTodoProps> = ({
   searchTodo,
   handleUpdateTodo,
 }) => {
+  const router = useRouter();
   const filterTodo = searchTodo
     ? todo.filter((tdo) => tdo.description.includes(searchTodo))
     : todo;
@@ -22,6 +24,10 @@ const ListTodo: FunctionComponent<ListTodoProps> = ({
   const sortTodo = filterTodo.sort(
     (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
   );
+
+  const handleTodoEdit = (id: string) => {
+    router.push(`tasks/${id}/edit`);
+  };
 
   return (
     <>
@@ -46,7 +52,10 @@ const ListTodo: FunctionComponent<ListTodoProps> = ({
                 />
                 <Text ml={5}>{tdo.description}</Text>
               </span>
-              <Button onClick={() => handleTodoDelete(tdo.id)}>Delete</Button>
+              <Group>
+                <Button onClick={() => handleTodoEdit(tdo.id)}>Edit</Button>
+                <Button onClick={() => handleTodoDelete(tdo.id)}>Delete</Button>
+              </Group>
             </div>
           ))
         )}
