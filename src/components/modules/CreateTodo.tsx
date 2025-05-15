@@ -1,4 +1,5 @@
 import { Button, Group, TextInput } from "@mantine/core";
+import { useRouter } from "next/router";
 import {
   useRef,
   useState,
@@ -16,6 +17,7 @@ const CreateTodo: FunctionComponent<CreateTodoProps> = ({
 }) => {
   const [todoDesc, setTodoDesc] = useState<string>("");
   const btnRef = useRef<HTMLButtonElement>(null);
+  const router = useRouter();
 
   const handleTodoDesc = (e: ChangeEvent<HTMLInputElement>) => {
     const todoDescription = e.target.value;
@@ -43,6 +45,13 @@ const CreateTodo: FunctionComponent<CreateTodoProps> = ({
           ref={btnRef}
         >
           Submit
+        </Button>
+        <Button
+          onClick={() => {
+            router.push("/tasks/new");
+          }}
+        >
+          New
         </Button>
       </Group>
     </>
