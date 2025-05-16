@@ -12,7 +12,7 @@ let todos: ITodo[] = [
   },
 ];
 
-const getTodosHandler = http.get("todos", () => {
+const getTodosHandler = http.get("/todos", () => {
   const response: IMockResponse<ITodo[]> = {
     status: 200,
     message: "",
@@ -21,7 +21,7 @@ const getTodosHandler = http.get("todos", () => {
   return HttpResponse.json(response);
 });
 
-const getTodoHandler = http.get("todos/:id", ({ params }) => {
+const getTodoHandler = http.get("/todos/:id", ({ params }) => {
   const { id } = params;
   const todo = todos.find((todo) => todo.id === id);
   if (!todo) {
@@ -40,7 +40,7 @@ const getTodoHandler = http.get("todos/:id", ({ params }) => {
   return HttpResponse.json(response);
 });
 
-const updateTodoHandler = http.put("todos/:id", async ({ params, request }) => {
+const updateTodoHandler = http.put("/todos/:id", async ({ params, request }) => {
   const { id } = params;
   const updatedTodoReq = (await request.json()) as ITodo;
   if (updatedTodoReq) {
@@ -54,7 +54,7 @@ const updateTodoHandler = http.put("todos/:id", async ({ params, request }) => {
   }
 });
 
-const deleteTodoHandler = http.delete("todos/:id", ({ params }) => {
+const deleteTodoHandler = http.delete("/todos/:id", ({ params }) => {
   const { id } = params;
   const newTodos = todos.filter((todo) => todo.id !== id);
   todos = newTodos;

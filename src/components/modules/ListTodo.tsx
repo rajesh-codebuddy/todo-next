@@ -1,6 +1,9 @@
 import type { FunctionComponent } from "react";
 import type { ITodo } from "../../types/todo/todo.entity";
 import { Button, Checkbox, Group, ScrollArea, Text } from "@mantine/core";
+import { useRouter } from "next/router";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { fetchTodos, handleTodoDelete } from "@/network/todo";
 
 interface ListTodoProps {
   todo: ITodo[];
@@ -10,11 +13,30 @@ interface ListTodoProps {
 }
 
 const ListTodo: FunctionComponent<ListTodoProps> = ({
-  todo,
-  handleTodoDelete,
+  // todo,
+  // handleTodoDelete,
   searchTodo,
   handleUpdateTodo,
 }) => {
+  const router = useRouter();
+  const queryClient = useQueryClient();
+
+  const { status, data, error } = useQuery({
+    queryKey: ["todos"],
+    queryFn: fetchTodos,
+    retry: 5,
+  });
+  const mutation = useMutation({
+    mutationFn: (id: string) => handleTodoDelete(id),
+    onSuccess: () => {
+      // Invalidate and refetch
+      console.log("delete");
+      queryClient.invalidateQueries({ queryKey: ["todos"] });
+    },
+  });
+  if (status === "pending") return <Text>Loading...</Text>;
+  if (status === "error") return <Text>{error.message}</Text>;
+  const todo = data as ITodo[];
   const filterTodo = searchTodo
     ? todo.filter((tdo) => tdo.description.includes(searchTodo))
     : todo;
@@ -22,6 +44,10 @@ const ListTodo: FunctionComponent<ListTodoProps> = ({
   const sortTodo = filterTodo.sort(
     (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
   );
+
+  const handleTodoEdit = (id: string) => {
+    router.push(`tasks/${id}/edit`);
+  };
 
   return (
     <>
@@ -46,7 +72,10 @@ const ListTodo: FunctionComponent<ListTodoProps> = ({
                 />
                 <Text ml={5}>{tdo.description}</Text>
               </span>
-              <Button onClick={() => handleTodoDelete(tdo.id)}>Delete</Button>
+              <Group>
+                <Button onClick={() => handleTodoEdit(tdo.id)}>Edit</Button>
+                <Button onClick={() => mutation.mutate(tdo.id)}>Delete</Button>
+              </Group>
             </div>
           ))
         )}
