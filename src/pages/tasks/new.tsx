@@ -5,6 +5,7 @@ import { type FunctionComponent } from "react";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/router";
 import { handleCreateTodo } from "@/network/todo";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 interface NewTodoProps {}
 
@@ -27,8 +28,16 @@ const NewTodo: FunctionComponent<NewTodoProps> = () => {
   } = useForm<FormData>({
     resolver: yupResolver(schema),
   });
+  const queryClient = useQueryClient();
+  const mutation = useMutation({
+    mutationFn: handleCreateTodo,
+    onSuccess: () => {
+      // Invalidate and refetch
+      queryClient.invalidateQueries({ queryKey: ["todos"] });
+    },
+  });
   const onSubmit = handleSubmit((data) => {
-    handleCreateTodo(data.todoInput);
+    mutation.mutate(data.todoInput);
     router.push("/");
   });
 

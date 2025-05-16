@@ -6,6 +6,7 @@ import { useForm } from "react-hook-form";
 import { useRouter } from "next/router";
 import { fetchTodo, handleCreateTodo, handleUpdateTodo } from "@/network/todo";
 import { ITodo } from "@/types/todo/todo.entity";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 interface EditTodoProps {}
 
@@ -37,9 +38,17 @@ const EditTodo: FunctionComponent<EditTodoProps> = ({}) => {
       todoInput: todo?.description,
     },
   });
+  const queryClient = useQueryClient();
+  const mutation = useMutation({
+    mutationFn: (nTodo: ITodo) => handleUpdateTodo(nTodo.id, nTodo),
+    onSuccess: () => {
+      // Invalidate and refetch
+      queryClient.invalidateQueries({ queryKey: ["todos"] });
+    },
+  });
   const onSubmit = handleSubmit((data) => {
     if (todo?.id) {
-      handleUpdateTodo(todo.id, {
+      mutation.mutate({
         ...todo,
         description: data.todoInput,
       });
